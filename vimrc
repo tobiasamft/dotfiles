@@ -34,9 +34,13 @@ syntax on
 map :Q :q
 map :W :w
 map :E :e
-" Ebable copy and paste on Mac
-vnoremap <C-c> :w !pbcopy<CR><CR>
-noremap <C-i> :r !pbpaste<CR><CR>
+vnoremap <C-c> "+y
+"vnoremap <C-i> "+p
+vnoremap // y/<C-R>"<CR>
+
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<cr>
+nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<cr>
+nnoremap <silent> <cr> :call LanguageClient_textDocument_hover()<cr>
 
 colorscheme Tomorrow-Night
 
@@ -107,6 +111,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-fireplace'
 "Plug 'https://github.com/guns/vim-clojure-static.git'"
+"Plug 'venantius/vim-cljfmt'
 
 Plug 'sheerun/vim-polyglot'
 
@@ -124,10 +129,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-surround'
+Plug 'junegunn/rainbow_parentheses.vim'
+Plug 'vim-scripts/paredit.vim'
 
 Plug 'ervandew/supertab'
 
 Plug 'elixir-lang/vim-elixir'
+Plug 'slashmili/alchemist.vim'
 
 Plug 'tpope/vim-endwise'
 
@@ -137,8 +145,27 @@ Plug 'janko-m/vim-test'
 
 Plug 'scrooloose/nerdcommenter'
 
+"--- reason ---
+"Plug 'reasonml-editor/vim-reason-plus'
+
+"Plug 'autozimu/LanguageClient-neovim', {
+    "\ 'branch': 'next',
+    "\ 'do': 'bash install.sh',
+    "\ }
+
+"Plug 'junegunn/fzf'
+
+"if has('nvim')
+  "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"else
+  "Plug 'Shougo/deoplete.nvim'
+  "Plug 'roxma/nvim-yarp'
+  "Plug 'roxma/vim-hug-neovim-rpc'
+"endif
+"--- reason ---
 " Initialize plugin system (:PlugInstall in vim!)
 call plug#end()
+" clean unused plugins with :PlugClean
 
 " airline config
 set laststatus=2
@@ -157,3 +184,17 @@ if executable('ag"')
   "let g:ackprg = 'ag --vimgrep'
 endif
 
+" Activation based on file type
+augroup rainbow_lisp
+  autocmd!
+  autocmd FileType lisp,clojure,scheme RainbowParentheses
+augroup END
+
+"--- reason ---
+"let g:LanguageClient_serverCommands = {
+    "\ 'reason': ['ocaml-language-server', '--stdio'],
+    "\ 'ocaml': ['ocaml-language-server', '--stdio'],
+    "\ }
+
+"let g:deoplete#enable_at_startup = 1
+"--- reason ---
