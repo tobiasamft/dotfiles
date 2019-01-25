@@ -115,6 +115,8 @@ Plug 'tpope/vim-fireplace'
 
 Plug 'sheerun/vim-polyglot'
 
+Plug 'pangloss/vim-javascript'
+
 Plug 'tpope/vim-fugitive'
 
 Plug 'scrooloose/nerdtree'
@@ -127,6 +129,7 @@ Plug 'rking/ag.vim'
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'enricobacis/vim-airline-clock'
 
 Plug 'tpope/vim-surround'
 Plug 'junegunn/rainbow_parentheses.vim'
@@ -144,6 +147,7 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'janko-m/vim-test'
 
 Plug 'scrooloose/nerdcommenter'
+"Plug 'fatih/vim-go' ", { 'do': ':GoUpdateBinaries' }
 
 "--- reason ---
 "Plug 'reasonml-editor/vim-reason-plus'
