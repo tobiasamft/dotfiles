@@ -28,7 +28,7 @@ export ASDFINSTALLS=$HOME/.asdf/installs
 
 # go stuff
 export GOPATH=$HOME/go
-export GOBIN=$HOME/go/bin
+export GOBIN=$GOPATH/bin
 #export GOROOT=/usr/local/opt/go/libexec
 GOV=$(asdf current golang | sed 's/[[:blank:]]*(set by .*)//g')
 export GOROOT=$ASDFINSTALLS/golang/$GOV/go/
