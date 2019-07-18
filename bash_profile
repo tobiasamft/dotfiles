@@ -65,7 +65,3 @@ alias ber="bundle exec rake"
 alias elint="mix format && mix credo --strict"
 alias rlint="bundle exec rubocop -a"
 alias golint="go fmt ./..."
-
-alias pipenv="python3 -m pipenv"
-alias pyrun="pipenv run python"
-alias py="pipenv shell"
