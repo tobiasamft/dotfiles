@@ -39,6 +39,8 @@ export PATH=$PATH:$GOROOT/bin
 export PATH="/usr/local/opt/qt/bin:$PATH"
 export QT_DIR="/usr/local/opt/qt/bin"
 
+alias emacs='emacs &'
+
 # bash aliases
 alias lein='~/bin/lein.sh'
 
@@ -49,6 +51,7 @@ alias gc="git commit -S"
 alias gd="git diff"
 alias gco="git checkout"
 alias gp="git push"
+alias gpsup="git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)"
 alias gr="git reset"
 alias grh="git reset --hard"
 alias gs="git status"
