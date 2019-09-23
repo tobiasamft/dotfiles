@@ -1,7 +1,7 @@
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 set nocompatible
-
+set autoread
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 set nobackup
@@ -62,6 +62,9 @@ autocmd BufRead,InsertLeave * match ExtraWhitespace /\s\+$/
 highlight ExtraWhitespace ctermbg=red guibg=red
 highlight ExtraLines ctermbg=red guibg=red
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+
+" Go fmt on save
+"au BufWritePost *.go :silent !gofmt -w %
 
 " Enable file type detection.
 " Use the default filetype settings, so that mail gets 'tw' set to 72,
