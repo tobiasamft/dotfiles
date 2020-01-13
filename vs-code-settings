@@ -4,12 +4,13 @@ Plugins:
 - Bracket Pair Colorizer
 - Code Spell Checker
 - ESLint
-- Live Share
+- Jest Runner
 - Path Intellisense
 - Prettier - Code formatter
 - stylelint
 - vscode-styled-components
 - Vim
+- Live Share
 
 Shortcuts:
 
