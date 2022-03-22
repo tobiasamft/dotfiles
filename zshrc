@@ -1,5 +1,13 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/tobias.amft/.oh-my-zsh"
@@ -68,10 +76,15 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+#
+# install plugins
+# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+# git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 # osx stuff
@@ -86,24 +99,57 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
    #. $(brew --prefix)/etc/bash_completion
 #fi
 
+export KOPS_STATE_STORE="s3://kops-kubernetes-state"
+
+# bash completion
+#[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+
+# cloud-ops stuff
+aws-login () {
+  aws-session.sh $1
+}
+
+ecr-login() {
+  aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 276018124710.dkr.ecr.eu-west-1.amazonaws.com
+}
+
+ops-login() {
+  aws-session.sh $1
+  kops-session.sh
+}
+
+# enable kubectl autocompletion
+# source <(kubectl completion zsh)
+
 # asdf stuff
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
-export ASDFROOT=$HOME/.asdf
-export ASDFINSTALLS=$HOME/.asdf/installs
+#. $HOME/.asdf/asdf.sh
+#. $HOME/.asdf/completions/asdf.bash
+#export ASDFROOT=$HOME/.asdf
+#export ASDFINSTALLS=$HOME/.asdf/installs
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 # go stuff
+GOV=$(asdf current golang | sed 's/golang[[:blank:]]*//g' | sed 's/[[:blank:]]*\/Users.*//g')
+export GOROOT=~/.asdf/installs/golang/$GOV/go
+
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
-GOV=$(asdf current golang | sed 's/[[:blank:]]*(set by .*)//g')
-export GOROOT=$ASDFINSTALLS/golang/$GOV/go/
+
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$GOROOT/bin
 
+export HELM_DIFF_COLOR=true
+
+
 # bash aliases
-alias emacs='emacs &'
+alias macs='emacs -nw'
+#alias smacs='emacs &'
 alias lein='~/bin/lein.sh'
 
+# docker aliases
+alias dostop="docker container stop $1 && docker container rm -v $1"
+alias doclean="docker rm -f $(docker ps -a -q) && docker rmi $(docker images -f "dangling=true" -q) --force"
+alias doprune="docker system prune -a"
 alias dc="docker-compose"
 
 alias be="bundle exec"
@@ -113,12 +159,52 @@ alias elint="mix format && mix credo --strict"
 alias rlint="bundle exec rubocop -a"
 alias golint="go fmt ./..."
 
+alias rbfy="rbprettier --write '**/*.rb'"
+
 alias gr="git reset"
 alias grh="git reset --hard"
 
 clown () {
     git clone git@github.com:ivx/"$1".git
+    cd "$1"
 }
+
+invision () {
+  cd ~/invision/$1
+}
+
+# cloud-ops aliases
+alias lds="linkerd --context staging.k8s.ivx.cloud"
+alias ldp="linkerd --context production.k8s.ivx.cloud"
+
+alias hfs="helmfile --kube-context staging.k8s.ivx.cloud -e staging"
+alias hfp="helmfile --kube-context production.k8s.ivx.cloud -e production"
+alias hfi="helmfile --kube-context infra.k8s.ivx.cloud -e infra"
+
+alias ks="kubectl --context staging.k8s.ivx.cloud"
+alias ksm="kubectl --context staging.k8s.ivx.cloud -n monitoring"
+alias kso="kubectl --context staging.k8s.ivx.cloud -n oauth"
+alias ksi="kubectl --context staging.k8s.ivx.cloud -n ingress-nginx"
+alias ksl="kubectl --context staging.k8s.ivx.cloud -n linkerd"
+alias kslv="kubectl --context staging.k8s.ivx.cloud -n linkerd-viz"
+
+alias kp="kubectl --context production.k8s.ivx.cloud"
+alias kpm="kubectl --context production.k8s.ivx.cloud -n monitoring"
+alias kpo="kubectl --context production.k8s.ivx.cloud -n oauth"
+alias kpi="kubectl --context production.k8s.ivx.cloud -n ingress-nginx"
+alias kpl="kubectl --context production.k8s.ivx.cloud -n linkerd"
+alias kplv="kubectl --context production.k8s.ivx.cloud -n linkerd-viz"
+
+alias ki="kubectl --context infra.k8s.ivx.cloud"
+alias kim="kubectl --context infra.k8s.ivx.cloud -n monitoring"
+alias kin="kubectl --context infra.k8s.ivx.cloud -n nginx-ingress"
+alias kio="kubectl --context infra.k8s.ivx.cloud -n oauth"
+
+alias kuc="kubectl config use-context"
+
+alias tf="terraform"
+alias tfplan="terraform plan -out .plan"
+alias tfapply="terraform apply .plan && rm .plan"
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -146,3 +232,6 @@ clown () {
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
