@@ -63,6 +63,9 @@ This function should only modify configuration layer settings."
            ruby-test-runner 'rspec)
      spell-checking
      syntax-checking
+     (terraform :variables
+                terraform-auto-format-on-save t
+                terraform-backend 'lsp)
      treemacs
      yaml
      )
